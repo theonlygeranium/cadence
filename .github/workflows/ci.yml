@@ -30,6 +30,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Test
+        run: npm run test:run
+
       - name: Build
         run: npm run build
         env:
@@ -37,8 +40,8 @@ jobs:
           DATABASE_URL: postgresql://cadence:ci_placeholder@localhost:5432/cadence
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: ci_placeholder_secret_min_32_chars_xx
-          PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
-          PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
+          PLAID_CLIENT_ID: ci_placeholder_client
+          PLAID_SECRET: ci_placeholder_secret
           PLAID_ENV: sandbox
           OLLAMA_BASE_URL: http://127.0.0.1:11434
           OLLAMA_MODEL: qwen3.6:latest

@@ -6,6 +6,98 @@ Each entry corresponds to a completed build phase or significant architectural d
 
 ---
 
+## [0.5.0] — 2026-06-10 — Codex
+
+### Added
+- Implemented SPEC-003 AI assistant: Ollama chat client, five tool schemas, DB-grounded query executor, authenticated streaming `/api/chat` route, per-user in-memory rate limiting, and responsive chat UI.
+- Hardened chat payload validation so public clients can only submit user/assistant message content and cannot inject system/tool messages.
+- Added tolerant Ollama tool-argument parsing for both object and JSON-string argument formats.
+- Added `trustHost` for Auth.js behind Cloudflare/Caddy and a startup warning when `OLLAMA_BASE_URL` is non-localhost with `OLLAMA_ALLOW_REMOTE=true`.
+- Deployed Cadence to Schubert at `/opt/cadence` with Docker Compose, PostgreSQL, generated server-only secrets, and Cloudflare Tunnel routing for `cadence.jgeronimo.com`.
+- Added localhost-only configurable Compose port binding and Docker host mapping for host-level Ollama access.
+
+### Validation
+- `scripts/secret-scan.sh all`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:run` (4 files, 6 tests)
+- `npm run build`
+- Authenticated live AI smoke against seeded temporary PostgreSQL on Schubert: balance prompt executed `get_account_balances` and returned exact seeded account figures.
+- General finance prompt responded without any tool execution.
+- Browser QA at desktop and 390px mobile viewports confirmed streaming UI behavior, no horizontal overflow, accessible send-button label, and no console warnings/errors.
+- Schubert Compose build and start completed; Drizzle schema push applied to production PostgreSQL.
+- Public Cloudflare Tunnel smoke: `https://cadence.jgeronimo.com/` returned `200`; unauthenticated `POST /api/chat` returned typed `401`; deployed `/chat` rendered cleanly in browser QA.
+
+### Notes
+- Full Plaid Link completion remains pending a fresh rotated Plaid secret. The live deployment intentionally uses placeholder Plaid values so protected app surfaces and AI infrastructure can be validated without reusing exposed credentials.
+- Public routing uses the existing Schubert Cloudflare Tunnel. The local Caddy reference binds Cadence to the LAN interface to avoid Tailscale's `443` listener.
+
+---
+
+## [0.4.0] — 2026-06-09 — Codex
+
+### Added
+- Implemented SPEC-002 Plaid integration: SDK client, Link token route, public-token exchange route, item removal route, all-items sync route, incremental transaction sync, and account summary helper.
+- Stored Plaid access tokens only through the AES-256-GCM encryption boundary.
+- Added sanitized Plaid error helpers and unit coverage for safe error metadata extraction.
+- Added session/user ownership checks to all Plaid API routes and item-scoped operations.
+
+### Validation
+- `scripts/secret-scan.sh all`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:run` (3 files, 4 tests)
+- `npm run build` with placeholder non-secret environment variables
+- Live local API smoke confirmed Plaid Link, exchange, sync, and delete routes return typed `401` responses when no session is present.
+
+### Notes
+- Full Plaid sandbox Link completion remains pending because no safe untracked `.env.local` or Schubert Plaid secret is present. The previously committed Plaid secret-looking values were removed from `.env.example` and should be treated as exposed.
+
+---
+
+## [0.3.0] — 2026-06-09 — Codex
+
+### Added
+- Implemented SPEC-001 database schema for Auth.js users/accounts/sessions/verification tokens, Plaid items/accounts/transactions, subscriptions, and paycheck profiles.
+- Added Drizzle relations and inferred select/insert TypeScript types for the Cadence financial model.
+- Added AES-256-GCM encryption helpers for Plaid access tokens in `src/lib/db/crypto.ts`.
+- Added focused Vitest coverage for encrypted secret handling and the required table-name contract.
+- Updated CI to run unit tests and use placeholder Plaid values during build validation.
+
+### Validation
+- `scripts/secret-scan.sh all`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:run` (2 files, 3 tests)
+- `npm run build` with placeholder non-secret environment variables
+- `npx drizzle-kit push` against a temporary PostgreSQL 16 QA container on Schubert
+- PostgreSQL metadata verification confirmed all expected tables and required indexes
+
+---
+
+## [0.2.0] — 2026-06-09 — Codex
+
+### Added
+- Implemented SPEC-000 core infrastructure: Next.js 16 App Router scaffold, Tailwind v4, shadcn/ui base components, Auth.js v5 route handlers, Drizzle client/configuration, and Zod environment validation.
+- Added Docker deployment assets: `Dockerfile`, `docker-compose.yml`, `.dockerignore`, and `ops/Caddyfile`.
+- Added `scripts/secret-scan.sh` and replaced committed Plaid secret-looking values in `.env.example` with placeholders.
+- Replaced the default scaffold screen with a Cadence dashboard shell suitable for live browser QA.
+
+### Validation
+- `scripts/secret-scan.sh all`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build` with placeholder non-secret environment variables
+- Missing-env validation via `src/lib/env.ts`
+- Local browser QA at desktop and mobile viewports: no console errors and no horizontal overflow
+- Schubert `docker compose config` validation with temporary placeholder env values
+
+### Notes
+- Local Docker CLI is not installed on this Mac shell, so Compose validation was performed on Schubert.
+- npm audit still reports the upstream Next/PostCSS advisory pinned inside `next@16.2.9`; npm's proposed fix is an invalid major downgrade, so no downgrade was applied.
+
+---
+
 ## [0.1.0] — 2026-06-09 — WRITER Agent
 
 ### Added
