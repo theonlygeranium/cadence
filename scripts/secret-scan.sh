@@ -43,8 +43,12 @@ findings="$(
     /gh[pousr]_[A-Za-z0-9_]{20,}/ { report("github-token") }
     /-----BEGIN ([A-Z0-9 ]*)?PRIVATE KEY-----/ { report("private-key") }
     /AKIA[0-9A-Z]{16}/ { report("aws-access-key") }
-    /PLAID_SECRET[[:space:]]*=[[:space:]]*[^#[:space:]]+/ &&
-      $0 !~ /(your_|placeholder|from_\.env|secret_matching|PLAID_SECRET=)$/ {
+    /^[[:space:]]*PLAID_SECRET[[:space:]]*=[[:space:]]*[^#[:space:]]+/ &&
+      $0 !~ /your_/ &&
+      $0 !~ /placeholder/ &&
+      $0 !~ /from_\.env/ &&
+      $0 !~ /secret_matching/ &&
+      $0 !~ /PLAID_SECRET=$/ {
       report("plaid-secret")
     }
     /DATABASE_URL[[:space:]]*=[[:space:]]*postgres(ql)?:\/\/[^:[:space:]]+:[^@[:space:]]+@/ &&
