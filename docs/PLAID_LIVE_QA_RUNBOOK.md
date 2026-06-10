@@ -1,6 +1,6 @@
 # Plaid Live QA Runbook
 
-This runbook closes the remaining SPEC-002 acceptance criteria once a fresh Plaid sandbox secret is available.
+This runbook records the live SPEC-002 acceptance workflow and can be repeated when Plaid sandbox credentials are rotated again.
 
 ## Safety Rules
 
@@ -34,6 +34,7 @@ This runbook closes the remaining SPEC-002 acceptance criteria once a fresh Plai
 3. Rotate only the **Sandbox secret**.
 4. Copy the new sandbox secret.
 5. Confirm it differs from the exposed Phase 0 value without printing either value.
+6. After the rotated secret is proven live, delete the old sandbox secret in the Plaid dashboard so the exposed value is no longer active.
 
 ## Update Schubert Runtime Env
 
@@ -102,6 +103,15 @@ With the QA session cookie:
 - Response figures match `plaid_accounts`.
 - General question such as "What is a credit score?" does not execute tools.
 
+If chat streams `fetch failed` from Schubert, verify the app container can reach host Ollama:
+
+```bash
+cd /opt/cadence
+docker compose exec -T app node -e "fetch(process.env.OLLAMA_BASE_URL + '/api/tags').then(r => console.log(r.status))"
+```
+
+On the current Schubert deployment, UFW has a narrow allow rule for Cadence's Docker bridge to reach TCP `11434` on the host. If the Compose network is recreated and the bridge name changes, add an equivalent rule for the new Cadence bridge before rerunning chat QA.
+
 ## Cleanup
 
 1. Delete short-lived QA session rows.
@@ -115,3 +125,14 @@ With the QA session cookie:
    ```
 
 5. Update `CHANGELOG.md` and `docs/PROJECT_CONTINUITY.md` with the live QA evidence.
+
+## 2026-06-10 Live QA Evidence
+
+- Rotated Plaid sandbox secret and updated Schubert private `/opt/cadence/.env.local`.
+- Deleted the old exposed sandbox secret from the Plaid dashboard after the rotated secret passed live QA.
+- Authenticated browser QA against `https://cadence.jgeronimo.com` returned `200` from `/api/plaid/link-token` and opened the Plaid Link iframe.
+- Plaid sandbox public-token creation returned `200` using the rotated secret.
+- Cadence `/api/plaid/exchange-token` returned `200` for the QA session and persisted Plaid items/accounts.
+- Plaid `/sandbox/transactions/create` was used on a `user_transactions_dynamic` sandbox Item, then Cadence `/api/plaid/sync` returned `200` with `178` added transactions.
+- Postgres confirmed `2` QA Plaid items, `14` QA accounts, `178` QA transactions, and encrypted `v1:` access-token storage.
+- Authenticated `/api/chat` completed successfully and returned the synced QA transactions from database-grounded tools.

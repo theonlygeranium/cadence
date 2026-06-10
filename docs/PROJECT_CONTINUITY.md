@@ -11,7 +11,7 @@ This document is the live state tracker for the Cadence project. All agents must
 
 Status: ✅ Complete and deployed
 
-All Phase 0 through Phase 4 specs are implemented. Cadence is deployed on Schubert from `/opt/cadence` via Docker Compose with PostgreSQL, generated server-only app secrets, and Cloudflare Tunnel routing at `https://cadence.jgeronimo.com`. The AI assistant streams through the authenticated `/api/chat` route, uses Ollama `qwen3.6:latest`, and grounds financial answers through database tools. Full Plaid sandbox Link completion is still pending a fresh rotated Plaid secret.
+All Phase 0 through Phase 4 specs are implemented, live-QA validated, and deployed. Cadence is deployed on Schubert from `/opt/cadence` via Docker Compose with PostgreSQL, generated server-only app secrets, and Cloudflare Tunnel routing at `https://cadence.jgeronimo.com`. The AI assistant streams through the authenticated `/api/chat` route, uses Ollama `qwen3.6:latest`, and grounds financial answers through database tools. Plaid sandbox credentials have been rotated, the old exposed sandbox secret was deleted from Plaid, and SPEC-002 live Link/exchange/sync acceptance has been validated against Schubert.
 
 ---
 
@@ -32,6 +32,8 @@ All Phase 0 through Phase 4 specs are implemented. Cadence is deployed on Schube
 | 2026-06-10 | Codex | SPEC-003 implemented and validated with live Ollama tool-call QA, seeded PostgreSQL data, streaming browser QA, and no-tool general prompt QA |
 | 2026-06-10 | Codex | Deployed Cadence to Schubert using Docker Compose, applied the Drizzle schema to production PostgreSQL, and exposed `cadence.jgeronimo.com` through the existing Cloudflare Tunnel |
 | 2026-06-10 | Codex | Added dashboard Plaid Link launcher and verified unauthenticated browser behavior; live Plaid Link/sync QA remains pending sandbox secret rotation |
+| 2026-06-10 | Codex | Rotated the Plaid sandbox secret, deleted the old exposed sandbox secret, updated Schubert private env, and validated live Link-token, token exchange, account sync, transaction sync, encrypted access-token storage, and DB-grounded AI chat |
+| 2026-06-10 | Codex | Added Schubert UFW allow rule for Cadence's Docker bridge to reach host Ollama on TCP 11434 |
 
 ---
 
@@ -41,12 +43,11 @@ All Phase 0 through Phase 4 specs are implemented. Cadence is deployed on Schube
 
 No further implementation specs are currently written. The next useful work is:
 
-1. Rotate/provide fresh Plaid sandbox credentials and complete live Plaid Link/item/transaction sync QA.
-2. Decide the first private-beta auth provider so a real user session can be created through the UI.
-3. Seed or sync real Plaid accounts, then repeat AI assistant QA against real connected data.
-4. Add a deployment runbook for future Schubert updates and schema pushes.
+1. Decide the first private-beta auth provider so a real user session can be created through the UI.
+2. Seed or sync real Plaid accounts, then repeat AI assistant QA against real connected data.
+3. Add a deployment runbook for future Schubert updates and schema pushes.
 
-Use `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining Plaid rotation, private env update, QA session seeding, live Link verification, and cleanup steps.
+Use `docs/PLAID_LIVE_QA_RUNBOOK.md` to repeat the Plaid rotation/private env update/QA session/live Link workflow.
 
 ---
 
@@ -54,7 +55,7 @@ Use `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining Plaid rotation, private en
 
 | # | Question | Status |
 |---|----------|--------|
-| 1 | Plaid: rotate the sandbox secret for live Link/item/transaction sync QA; dashboard inspection confirmed the current sandbox secret matches the original exposed Phase 0 value | Open — requires explicit rotation approval |
+| 1 | Plaid: rotate the sandbox secret for live Link/item/transaction sync QA; dashboard inspection confirmed the prior sandbox secret matched the original exposed Phase 0 value | Closed — rotated 2026-06-10, old exposed sandbox secret deleted, Schubert private env updated |
 | 2 | SMTP credentials for transactional email (billing alerts, weekly digest) | Open — Jeffrey to provide |
 | 3 | PostgreSQL: run in Docker on Schubert or use managed instance? | Decision: Docker on Schubert (see ADR-001) |
 | 4 | NextAuth.js provider: Google + magic link email, or credentials-only for personal use? | Open — Jeffrey to decide |
@@ -64,10 +65,11 @@ Use `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining Plaid rotation, private en
 ## Active Decisions & Constraints
 
 - **Rapid prototyping phase**: all commits to `main`. No feature branches unless Jeffrey requests them.
-- **Self-hosted LLM**: Ollama `qwen3.6:latest` at `http://127.0.0.1:11434` on Schubert. No external LLM API calls for financial data.
+- **Self-hosted LLM**: Ollama `qwen3.6:latest` at `http://127.0.0.1:11434` on Schubert. The Cadence app container reaches it via `host.docker.internal:11434`. No external LLM API calls for financial data.
 - **Privacy by default**: no financial data or LLM prompts leave Schubert unless explicitly opted into.
 - **Domain**: `cadence.jgeronimo.com` — Caddy reverse proxy on Schubert.
 - **Deployment**: `/opt/cadence` on Schubert, Docker Compose app bound to `127.0.0.1:3031`, public route through the existing Cloudflare Tunnel to `http://localhost:3031`.
+- **Schubert firewall**: UFW allows Cadence's Docker bridge `br-25e57072a585` to reach host Ollama on TCP `11434`. If the Compose network is recreated and the bridge name changes, renew the narrow allow rule before AI chat QA.
 - **Mobile**: PWA approach for on-the-go use cases (receipt capture, balance checks).
 
 ---
@@ -78,7 +80,7 @@ Use `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining Plaid rotation, private en
 |-------|-------|------|--------|
 | #1 | SPEC-000: Environment Setup on Schubert | `docs/specs/SPEC-000-environment-setup.md` | Complete |
 | #2 | SPEC-001: Database Schema (Drizzle + PostgreSQL) | `docs/specs/SPEC-001-database-schema.md` | Complete |
-| #3 | SPEC-002: Plaid Link Integration & Transaction Sync | `docs/specs/SPEC-002-plaid-integration.md` | Link UI and API implementation complete; live credential QA pending sandbox secret rotation |
+| #3 | SPEC-002: Plaid Link Integration & Transaction Sync | `docs/specs/SPEC-002-plaid-integration.md` | Complete |
 | #4 | SPEC-003: AI Assistant Architecture (Ollama Tool-Calling) | `docs/specs/SPEC-003-ai-assistant.md` | Complete |
 
 ---

@@ -6,6 +6,25 @@ Each entry corresponds to a completed build phase or significant architectural d
 
 ---
 
+## [0.5.2] — 2026-06-10 — Codex
+
+### Changed
+- Rotated the Plaid sandbox secret, updated Schubert's private runtime env, and deleted the old exposed sandbox secret from the Plaid dashboard after validation.
+- Added a private local rotation pointer at `/Users/jeffgeronimo/.cadence-secrets/plaid-sandbox-rotation-2026-06-10.md` with no raw secret material.
+- Added a Schubert UFW allow rule for Cadence's Docker bridge to reach host Ollama on TCP `11434`.
+- Updated project continuity and Plaid live QA docs with the completed live acceptance evidence.
+
+### Validation
+- Rebuilt Schubert app container with the rotated Plaid sandbox secret.
+- Public authenticated browser QA: `POST /api/plaid/link-token` returned `200`, the dashboard switched to **Open Link**, and Plaid Link opened in an iframe with no browser console errors.
+- Plaid sandbox public-token creation returned `200`; Cadence `POST /api/plaid/exchange-token` returned `200`.
+- Plaid sandbox custom transaction creation returned `200`; Cadence `POST /api/plaid/sync` returned `200` with `178` added transactions.
+- Production Postgres confirmed `2` QA Plaid items, `14` QA accounts, `178` QA transactions, and encrypted `v1:` Plaid access-token storage.
+- App-container Ollama reachability: `/api/tags` returned `200` and confirmed `qwen3.6:latest` is available.
+- Authenticated `POST /api/chat` returned `200`, streamed `done`, and answered with synced QA transactions.
+
+---
+
 ## [0.5.1] — 2026-06-10 — Codex
 
 ### Added
