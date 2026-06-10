@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+        env:
+          # CI build uses placeholder values; real secrets are on Schubert only.
+          DATABASE_URL: postgresql://cadence:ci_placeholder@localhost:5432/cadence
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: ci_placeholder_secret_min_32_chars_xx
+          PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
+          PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
+          PLAID_ENV: sandbox
+          OLLAMA_BASE_URL: http://127.0.0.1:11434
+          OLLAMA_MODEL: qwen3.6:latest
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          ENCRYPTION_KEY: ci_placeholder_32_byte_hex_key_xxxx
