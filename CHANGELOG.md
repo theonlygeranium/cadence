@@ -6,6 +6,26 @@ Each entry corresponds to a completed build phase or significant architectural d
 
 ---
 
+## [0.5.1] — 2026-06-10 — Codex
+
+### Added
+- Added a dashboard Plaid Link launcher using `react-plaid-link`, backed by the existing `/api/plaid/link-token` and `/api/plaid/exchange-token` routes.
+- Added an authentication precheck before Link token creation so unauthenticated users get a clean in-page status without a failed Link-token request in the browser console.
+- Updated dashboard state text to reflect that the Ollama tool loop is enabled.
+
+### Validation
+- `scripts/secret-scan.sh all`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:run` (4 files, 6 tests)
+- `npm run build`
+- Browser QA at desktop and 390px mobile viewports confirmed the Plaid connection control renders, unauthenticated state is handled cleanly, no horizontal overflow occurs, and no console warnings/errors are emitted.
+
+### Notes
+- Plaid dashboard inspection confirmed the visible sandbox secret still matches the original exposed Phase 0 value. Live Plaid Link/item/transaction QA still requires rotating the Plaid sandbox secret before using it in Schubert or local `.env.local`.
+
+---
+
 ## [0.5.0] — 2026-06-10 — Codex
 
 ### Added

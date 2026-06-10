@@ -31,6 +31,7 @@ All Phase 0 through Phase 4 specs are implemented. Cadence is deployed on Schube
 | 2026-06-09 | Codex | SPEC-002 implemented and validated with unit tests plus local 401 route-protection smoke; live Plaid sandbox QA pending fresh secret |
 | 2026-06-10 | Codex | SPEC-003 implemented and validated with live Ollama tool-call QA, seeded PostgreSQL data, streaming browser QA, and no-tool general prompt QA |
 | 2026-06-10 | Codex | Deployed Cadence to Schubert using Docker Compose, applied the Drizzle schema to production PostgreSQL, and exposed `cadence.jgeronimo.com` through the existing Cloudflare Tunnel |
+| 2026-06-10 | Codex | Added dashboard Plaid Link launcher and verified unauthenticated browser behavior; live Plaid Link/sync QA remains pending sandbox secret rotation |
 
 ---
 
@@ -40,7 +41,7 @@ All Phase 0 through Phase 4 specs are implemented. Cadence is deployed on Schube
 
 No further implementation specs are currently written. The next useful work is:
 
-1. Rotate/provide fresh Plaid sandbox credentials and complete live Plaid Link QA.
+1. Rotate/provide fresh Plaid sandbox credentials and complete live Plaid Link/item/transaction sync QA.
 2. Decide the first private-beta auth provider so a real user session can be created through the UI.
 3. Seed or sync real Plaid accounts, then repeat AI assistant QA against real connected data.
 4. Add a deployment runbook for future Schubert updates and schema pushes.
@@ -51,7 +52,7 @@ No further implementation specs are currently written. The next useful work is:
 
 | # | Question | Status |
 |---|----------|--------|
-| 1 | Plaid: provide a fresh sandbox secret for live Link QA; old committed secret-looking values should be treated as exposed | Open — Jeffrey to rotate/provide |
+| 1 | Plaid: rotate the sandbox secret for live Link/item/transaction sync QA; dashboard inspection confirmed the current sandbox secret matches the original exposed Phase 0 value | Open — requires explicit rotation approval |
 | 2 | SMTP credentials for transactional email (billing alerts, weekly digest) | Open — Jeffrey to provide |
 | 3 | PostgreSQL: run in Docker on Schubert or use managed instance? | Decision: Docker on Schubert (see ADR-001) |
 | 4 | NextAuth.js provider: Google + magic link email, or credentials-only for personal use? | Open — Jeffrey to decide |
@@ -75,7 +76,7 @@ No further implementation specs are currently written. The next useful work is:
 |-------|-------|------|--------|
 | #1 | SPEC-000: Environment Setup on Schubert | `docs/specs/SPEC-000-environment-setup.md` | Complete |
 | #2 | SPEC-001: Database Schema (Drizzle + PostgreSQL) | `docs/specs/SPEC-001-database-schema.md` | Complete |
-| #3 | SPEC-002: Plaid Link Integration & Transaction Sync | `docs/specs/SPEC-002-plaid-integration.md` | Implementation complete; live credential QA pending |
+| #3 | SPEC-002: Plaid Link Integration & Transaction Sync | `docs/specs/SPEC-002-plaid-integration.md` | Link UI and API implementation complete; live credential QA pending sandbox secret rotation |
 | #4 | SPEC-003: AI Assistant Architecture (Ollama Tool-Calling) | `docs/specs/SPEC-003-ai-assistant.md` | Complete |
 
 ---

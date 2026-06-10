@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlaidLinkButton } from "@/components/plaid-link-button";
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
@@ -80,6 +81,18 @@ export default function Home() {
           ))}
         </section>
 
+        <section className="rounded-md border bg-card p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-base font-medium">Institution Connection</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Plaid sandbox link and transaction sync
+              </p>
+            </div>
+            <PlaidLinkButton />
+          </div>
+        </section>
+
         <section className="grid gap-4 lg:grid-cols-[1.4fr_0.9fr]">
           <Card>
             <CardHeader>
@@ -123,10 +136,10 @@ export default function Home() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div className="rounded-md border bg-muted/40 p-3">
-                <p className="font-medium">Ollama tool loop pending</p>
+                <p className="font-medium">Ollama tool loop enabled</p>
                 <p className="mt-1 text-muted-foreground">
-                  Financial answers will be constrained to database query
-                  results before chat is enabled.
+                  Financial answers are constrained to database query results
+                  through the authenticated chat route.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-3">
