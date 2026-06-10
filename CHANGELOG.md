@@ -12,6 +12,7 @@ Each entry corresponds to a completed build phase or significant architectural d
 - Added a dashboard Plaid Link launcher using `react-plaid-link`, backed by the existing `/api/plaid/link-token` and `/api/plaid/exchange-token` routes.
 - Added an authentication precheck before Link token creation so unauthenticated users get a clean in-page status without a failed Link-token request in the browser console.
 - Updated dashboard state text to reflect that the Ollama tool loop is enabled.
+- Added `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining sandbox secret rotation and live Link/sync QA workflow.
 
 ### Validation
 - `scripts/secret-scan.sh all`

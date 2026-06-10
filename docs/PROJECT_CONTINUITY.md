@@ -46,6 +46,8 @@ No further implementation specs are currently written. The next useful work is:
 3. Seed or sync real Plaid accounts, then repeat AI assistant QA against real connected data.
 4. Add a deployment runbook for future Schubert updates and schema pushes.
 
+Use `docs/PLAID_LIVE_QA_RUNBOOK.md` for the remaining Plaid rotation, private env update, QA session seeding, live Link verification, and cleanup steps.
+
 ---
 
 ## Open Questions
